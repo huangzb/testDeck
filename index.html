@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Test deck</title>
+  <title>Normal Approximation of Binomial Distribution</title>
   <meta charset="utf-8">
-  <meta name="description" content="Test deck">
+  <meta name="description" content="Normal Approximation of Binomial Distribution">
   <meta name="author" content="">
   <meta name="generator" content="slidify" />
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -32,7 +32,7 @@
     <!-- LOGO SLIDE -->
         <slide class="title-slide segue nobackground">
   <hgroup class="auto-fadein">
-    <h1>Test deck</h1>
+    <h1>Normal Approximation of Binomial Distribution</h1>
     <h2></h2>
     <p><br/></p>
   </hgroup>
@@ -43,13 +43,12 @@
     <!-- SLIDES -->
     <slide class="" id="slide-1" style="background:;">
   <hgroup>
-    <h2>Read-And-Delete</h2>
+    <h2>Motivation</h2>
   </hgroup>
   <article data-timings="">
     <ol>
-<li>Edit YAML front matter</li>
-<li>Write using R Markdown</li>
-<li>Use an empty line followed by three dashes to separate slides!</li>
+<li>For Binomial Distribution B(n, p), when n is large, can be approximated by Normal Distribution N(np, np(1-p))</li>
+<li>The shiny app is designed for the user to interactively tune n, p and observe the approximation.</li>
 </ol>
 
   </article>
@@ -58,13 +57,74 @@
 
 <slide class="class" id="id" style="background:;">
   <hgroup>
-    <h2>Slide 2</h2>
+    <h2>Part of server.R</h2>
   </hgroup>
   <article data-timings="">
-    <pre><code class="r">plot(1:10, 1:10)
+    <ol>
+<li>calculated binomial and normal distribution with dbinom and dnorm.</li>
+<li><p>Plot two distributions on the same plot. </p>
+
+<pre><code>output$plot &lt;- renderPlot( {
+        n &lt;- input$n
+        p &lt;- input$p   
+       mean &lt;- n * p
+       sd &lt;- sqrt(n * p * (1 - p))
+
+       x &lt;- seq(0, n, by=1)
+       x2 &lt;- seq(0, n, by = 0.01)
+       y &lt;- dbinom(x, n, p)               
+       z &lt;- dnorm(x2, mean, sd)
+       plot(x2, z, type = &quot;l&quot;, col = &quot;green&quot;, lwd = 5, 
+            main = &quot;Normal Approximation of Bionomial Distribution&quot;)
+       lines(x, y, type = &quot;h&quot;,  col = &quot;red&quot;, lwd = 5)    
+       legend(&quot;topright&quot;, c(&quot;Normal Approximation&quot;, &quot;Binomial Distribution&quot;),
+       lty=c(1,1), lwd=c(5, 5), col=c(&quot;green&quot;,&quot;red&quot;))                      
 </code></pre>
 
-<p><img src="assets/fig/unnamed-chunk-1.png" alt="plot of chunk unnamed-chunk-1"> </p>
+<p>}) </p></li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Part of ui.R</h2>
+  </hgroup>
+  <article data-timings="">
+    <ol>
+<li>Read n, p value on sliders. </li>
+<li><p>Output Density Function Plot and mean and standard deviation of normal approximation.</p>
+
+<pre><code># Input n, p
+sidebarPanel(                
+        sliderInput(&#39;n&#39;, &#39;n&#39;, min = 1, max = 50,
+                    value = 6, step=1),
+        sliderInput(&#39;p&#39;, &#39;p&#39;, min = 0.01, max = 0.99,
+                    value = 0.5, step=0.01)                
+),
+# Output Density Function plot 
+mainPanel(
+        plotOutput(&#39;plot&#39;),    
+        h4(&#39;mean of normal approximation&#39;),
+        verbatimTextOutput(&#39;mean&#39;),
+        h4(&#39;standard deviation of normal approximation&#39;),
+        verbatimTextOutput(&#39;sd&#39;)
+)
+</code></pre></li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Snapshot of shiny app</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="./shinyapp.jpg", width="95%" height="95%"  /></p>
 
   </article>
   <!-- Presenter Notes -->
@@ -76,14 +136,26 @@
     <ul>
       <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=1 title='Read-And-Delete'>
+        data-slide=1 title='Motivation'>
          1
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=2 title='Slide 2'>
+        data-slide=2 title='Part of server.R'>
          2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Part of ui.R'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Snapshot of shiny app'>
+         4
       </a>
     </li>
   </ul>
@@ -96,7 +168,21 @@
 </body>
   <!-- Load Javascripts for Widgets -->
   
-  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
   <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
   <!-- DONE LOADING HIGHLIGHTER JS FILES -->
